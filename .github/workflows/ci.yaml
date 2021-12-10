@@ -18,7 +18,6 @@ jobs:
         with:
           name: menu-server
           path: target/menu-server.jar
-
   release:
     runs-on: ubuntu-20.04
     needs: build
@@ -41,7 +40,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./my-artifact.zip
-          asset_name: my-artifact.zip
+          asset_path: ./releasetest.zip
+          asset_name: releasetest.zip
           asset_content_type: application/zip
 
