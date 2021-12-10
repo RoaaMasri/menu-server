@@ -44,6 +44,7 @@ public class MenuController {
     return createMenuService.createMenu(menu);
   }
 
+  //comment new pull
   @DeleteMapping(path = "/menus/{id}")
   public void deleteMenu(@PathVariable Long id) {
     menuRepository.deleteById(id);
