@@ -23,6 +23,14 @@ jobs:
     needs: build
     if: contains(github.ref, 'ref/tags/v')
     steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: menu-server
+          
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
