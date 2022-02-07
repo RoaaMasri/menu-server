@@ -1,44 +1,33 @@
 name: CI
-
 on:
-  push:
+  - push
     # Sequence of patterns matched against refs/tags
-    tags:
-    - v* # Push events to matching v*, i.e. v1.0, v20.15.10
-  pull_request:
-
+    #tags:
+    #- 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
 jobs:
   build:
-    name: Build and Run Tests
     runs-on: ubuntu-20.04
     steps:
-      - name: Checkout
       - uses: actions/checkout@v2
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
           java-version: '11'
-          cache: 'maven'
-      - name: Package and Run all Tests
-        run: mvn verify
-      - name: Upload Package App
-        uses: actions/upload-artifact@v2
+      - run: mvn package
+      - uses: actions/upload-artifact@v2
         with:
           name: menu-server
           path: target/menu-server.jar
-
-
-  github-release:
-    name: Release on Github
+  release:
     runs-on: ubuntu-20.04
     needs: build
     if: contains(github.ref, 'ref/tags/v')
     steps:
-      - name: Download jar app
-        uses: actions/download-artifact@v2
+      - uses: actions/download-artifact@v2
         with:
           name: menu-server
-          path: ./releaseAsset/menu-server.jar
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -59,3 +48,4 @@ jobs:
           asset_path: ./menu-server.jar
           asset_name: menu-server.jar
           asset_content_type: application/jar-archive
+
