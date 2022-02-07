@@ -50,52 +50,69 @@ public class MenuControllerIT {
   @LocalServerPort
   private int port;
 
-  private URL getMenusURL() throws Exception {
-    return new URL("http://localhost:" + port + "/menus");
-  }
+  private URL url;
 
-  /*@Autowired
-  private MenuRepository menuRepository;*/
+  // Injecte automatiquement l'instance du menu repository
+  @Autowired
+  private MenuRepository menuRepository;
 
   // Injecte automatiquement l'instance du TestRestTemplate
   @Autowired
   private TestRestTemplate template;
 
-  /*public void listExitingMenus() throws Exception {
-      // Effectue une requête GET /menus
-      ResponseEntity<MenuDto[]> response = this.template.getForEntity(getMenusURL().toString(), MenuDto[].class);
-      //Parse le payload de la réponse sous forme d'array de MenuDto
-      MenuDto[] gotMenus = response.getBody();
-    }*/
+  @Autowired
+  private DishRepository dishRepository;
+
+  private final List<Menu> existingMenus = Arrays.asList(
+      new Menu(null, "Christmas menu", new HashSet<>(Arrays.asList(new Dish(null, "Turkey", null), new Dish(null, "Pecan Pie", null)))),
+      new Menu(null, "New year's eve menu", new HashSet<>(Arrays.asList(new Dish(null, "Potatos", null), new Dish(null, "Tiramisu", null)))));
+
+  @BeforeEach
+  private URL getMenusURL() throws Exception {
+    return new URL("http://localhost:" + port + "/menus");
+  }
+
+  @BeforeEach
+  public void initDataset() {
+    for (Menu menu : existingMenus) {
+      menuRepository.save(menu);
+    }
+  }
 
   @Test
     @DisplayName("lists all known menus")
-    public void listsKnownMenus() throws Exception { 
-      // On défini wantMenus, les résultats attendus
-      Iterable<MenuDto> wantMenus = Arrays.asList(
-          new MenuDto(
-            Long.valueOf(1),
-            "Christmas menu",
-            new HashSet<>(
-              Arrays.asList(
-                new DishDto(Long.valueOf(1), "Turkey"),
-                new DishDto(Long.valueOf(2), "Pecan Pie")
-              )
-            )
-          )
-        );
+      public void listsExistingMenus() throws Exception {
+    MenuDto[] wantMenus = {
+        new MenuDto(Long.valueOf(1), "Christmas menu",
+            new HashSet<DishDto>(
+                Arrays.asList(new DishDto(Long.valueOf(1), "Turkey"), new DishDto(Long.valueOf(2), "Pecan Pie")))),
+        new MenuDto(Long.valueOf(2), "New year's eve menu", new HashSet<DishDto>(
+            Arrays.asList(new DishDto(Long.valueOf(3), "Potatos"), new DishDto(Long.valueOf(4), "Tiramisu")))) };
 
-    
-        // Effectue une requête GET /menus
-        ResponseEntity<MenuDto[]> response = this.template.getForEntity(getMenusURL().toString(), MenuDto[].class);
-        //Parse le payload de la réponse sous forme d'array de MenuDto
-        MenuDto[] gotMenus = response.getBody();
-        
+    ResponseEntity<MenuDto[]> response = this.template.getForEntity(url.toString(), MenuDto[].class);
 
-        // On compare la valeur obtenue avec la valeur attendue.
-        assertEquals(wantMenus, gotMenus);
-    }
+    MenuDto[] gotMenus = response.getBody();
 
+    assertEquals(HttpStatus.OK, response.getStatusCode());
+    assertArrayEquals(wantMenus, gotMenus);
+  }
 
-  
+  @Test
+  public void createsNewMenu() throws Exception {
+    MenuDto wantMenu = new MenuDto(Long.valueOf(3), "Valentines'day menu", new HashSet<DishDto>(
+        Arrays.asList(new DishDto(Long.valueOf(1), "Turkey"), new DishDto(Long.valueOf(2), "Pecan Pie"))));
+
+    MenuDto newMenu = new MenuDto(null, "Valentines'day menu",
+        new HashSet<DishDto>(Arrays.asList(new DishDto(null, "Turkey"), new DishDto(null, "Pecan Pie"))));
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+
+    HttpEntity<MenuDto> request = new HttpEntity<>(newMenu, headers);
+
+    ResponseEntity<MenuDto> response = this.template.postForEntity(url.toString(), request, MenuDto.class);
+
+    assertEquals(HttpStatus.CREATED, response.getStatusCode());
+    assertEquals(wantMenu, response.getBody());
+  }
 }
