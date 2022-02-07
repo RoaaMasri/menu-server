@@ -47,18 +47,17 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-maven-plugin</artifactId>
         </plugin>
-        <!--
         <plugin>
-          Configure le maven-surefire-plugin 
+          <!-- Configure le maven-surefire-plugin -->
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
           <configuration>
-             Désactive tous les tests pour l'execution par défaut 
+            <!-- Désactive tous les tests pour l'execution par défaut -->
             <skipTests>true</skipTests>
           </configuration>
           <executions>
             <execution>
-              Crée une première execution pour jouer les tests unitaires 
+              <!--Crée une première execution pour jouer les tests unitaires -->
               <id>unit</id>
               <phase>test</phase>
               <goals>
@@ -66,14 +65,14 @@
               </goals>
               <configuration>
                 <skipTests>${skipUnitTests}</skipTests>
-                Inclue et execute les tests contenus dans les fichiers ayant le suffixe Tests.java
+                <!-- Inclue et execute les tests contenus dans les fichiers ayant le suffixe Tests.java-->
                 <includes>
                   <include>**/*Tests.java</include>
                 </includes>
               </configuration>
             </execution>
             <execution>
-              Crée une seconde execution pour jouer les tests d'integration 
+              <!--Crée une seconde execution pour jouer les tests d'integration -->
               <id>integration</id>
               <phase>integration-test</phase>
               <goals>
@@ -82,14 +81,13 @@
               <configuration>
                 <skipTests>false</skipTests>
                 <includes>
-                  Inclue et execute les tests contenus dans les fichiers ayant le suffixe IT.java
+                  <!-- Inclue et execute les tests contenus dans les fichiers ayant le suffixe IT.java-->
                   <include>**/*IT.java</include>
                 </includes>
               </configuration>
             </execution>
           </executions>
-        </plugin> -->
-
+        </plugin>
         </plugins>
   </build>
 </project>
