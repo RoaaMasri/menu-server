@@ -1,7 +1,6 @@
+name: CI
 on:
-  push:
-
-name: CD
+  - push
     # Sequence of patterns matched against refs/tags
     #tags:
     #- 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
@@ -14,13 +13,13 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-      - name: Run the Maven verify phase
-      - run: mvn verify
+      - run: mvn package
       - uses: actions/upload-artifact@v2
         with:
           name: menu-server
           path: target/menu-server.jar
-  
+
+"""
   release:
     runs-on: ubuntu-20.04
     needs: build
@@ -53,4 +52,4 @@ jobs:
           asset_path: ./menu-server.jar
           asset_name: menu-server.jar
           asset_content_type: application/jar-archive
-
+"""
