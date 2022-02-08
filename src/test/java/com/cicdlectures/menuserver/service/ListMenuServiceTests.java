@@ -29,8 +29,8 @@ public class ListMenuServiceTests {
   
     @BeforeEach
     public void init() {
-      repository = mock(MenuRepository.class);
-      subject = new ListMenuService(repository);
+      this.repository = mock(MenuRepository.class);
+      this.subject = new ListMenuService(this.repository);
     }
   
     @Test
@@ -51,7 +51,7 @@ public class ListMenuServiceTests {
       );
 
       // On configure le menuRepository pour qu'il retourne notre liste de menus.
-      when(repository.findAll()).thenReturn(existingMenus);
+      when(this.repository.findAll()).thenReturn(existingMenus);
 
       // On appelle notre sujet
       List<MenuDto> gotMenus = subject.listMenus();
