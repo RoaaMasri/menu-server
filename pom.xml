@@ -64,6 +64,7 @@
                 <goal>test</goal>
               </goals>
               <configuration>
+                <!--suppress UnresolvedMavenProperty -->
                 <skipTests>${skipUnitTests}</skipTests>
                 <!-- Inclue et execute les tests contenus dans les fichiers ayant le suffixe Tests.java-->
                 <includes>
