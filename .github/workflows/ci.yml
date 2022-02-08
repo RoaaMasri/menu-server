@@ -26,7 +26,7 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
-
+      - run: mvn clean verify
       
 
   release:
